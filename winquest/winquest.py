@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import logging
-import parameter
 from tkinter import Menu, Label, YES, BOTH
 import _thread, queue
 from pathlib import Path
 from datetime import datetime
 from typing import Mapping, Dict, Any, List, Union
+
+from parameter import param_parser
 from utility import CSVReader, exception_printer
 from guimixin import MainWindow
-from exam import Exam
-from export import SerializeExam, RLInterface
+import quest2pdf
+
 from _version import __version__
 
 
@@ -21,7 +20,7 @@ LOGGER = logging.getLogger(LOGNAME)
 def main():
     """Reads parameter and start loop.
     """
-    param: Dict[str, Any] = parameter.param_parser()
+    param: Dict[str, Any] = param_parser()
     LOGGER.debug(str(param))
 
     c = ContentMix(param)
@@ -65,69 +64,44 @@ class ContentMix(MainWindow):
             self.errorbox("Indicare sorgente e destinazione")
 
     def to_pdf(self, input_file: Path, output_folder: Path):
-        rows = self._get_rows(input_file)
-
-        if not rows:
-            LOGGER.warning("Empty rows.")
-            self.errorbox("dati non validi")
-            return
-
         try:
-            exam = Exam()
-            exam.attribute_selector = (
-                "question",
-                "subject",
-                "image",
-                "void",
-                "A",
-                "void",
-                "B",
-                "void",
-                "C",
-                "void",
-                "D",
-                "void",
-            )
-            exam.load(rows)
+            exam = quest2pdf.Exam()
+
+            if self.parameters["csv-heading-keys"] is not None:
+                exam.attribute_selector = self.parameters["csv-heading-keys"].split(",")
+            exam.from_csv(input_file)
             exam.add_path_parent(input_file)
-            serial_exam = SerializeExam(exam)
             logging.warning("Parameter: %s", self.parameters)
+
             for number in range(self.parameters["number"]):
                 if self.parameters["not_shuffle"] is False:
                     exam.shuffle()
+
                 output_file_name_exam = Path(f"{self.parameters['exam']}_{number}.pdf")
+                output_file_name_correction = Path(
+                    f"{self.parameters['correction']}_{number}.pdf"
+                )
+
                 if isinstance(self.parameters["page_heading"], str):
                     exam_heading = self.parameters["page_heading"]
                 elif self.parameters["page_heading"]:
                     exam_heading = output_file_name_exam
                 else:
                     exam_heading = ""
+
                 if isinstance(self.parameters["page_footer"], str):
                     exam_footer = self.parameters["page_footer"]
                 elif self.parameters["page_footer"]:
                     exam_footer = datetime.now().isoformat()
                 else:
                     exam_footer = ""
-                to_pdf_interface = RLInterface(
-                    serial_exam.assignment(),
-                    output_file_name_exam,
-                    destination=output_folder,
+
+                exam.print(
+                    output_folder / output_file_name_exam,
+                    correction_file_name=output_folder / output_file_name_correction,
                     heading=exam_heading,
-                    footer=exam_footer,
+                    footer=exam_footer
                 )
-                to_pdf_interface.build()
-                output_file_name_correction = Path(
-                    f"{self.parameters['correction']}_{number}.pdf"
-                )
-                to_pdf_interface = RLInterface(
-                    serial_exam.correction(),
-                    output_file_name_correction,
-                    destination=output_folder,
-                    top_item_bullet_type="A",
-                    sub_item_bullet_type="1",
-                    heading=output_file_name_exam.name
-                )
-                to_pdf_interface.build()
         except Exception as err:
             LOGGER.critical("CSVReader failed: %s %s", err.__class__, err)
             self.errorbox(exception_printer(err))

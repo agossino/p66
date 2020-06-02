@@ -6,6 +6,7 @@ import logging.config
 import json
 import pathlib
 from typing import Dict, Any, List, Optional
+
 from _version import __version__
 
 logName = "quest2pdf." + __name__
@@ -145,6 +146,8 @@ def cli_parser() -> argparse.ArgumentParser:
         help="delimiter for comma separated value input file.",
         default="comma",
     )
+    parser.add_argument("-k", "--csv-heading-keys", type=str, help="heading fields (keys) used in CSV file",
+                        default=None)
     parser.add_argument(
         "-v",
         "--version",
