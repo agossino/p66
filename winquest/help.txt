@@ -1,0 +1,23 @@
+Questo programma genera dei questionari con delle domande a scelta multipla, del tipo:
+1 Quale è la capitale d'Italia?
+A Sidney.
+B Roma.
+C L'Italia non ha capitale.
+D Morterone.
+
+I file generati sono in PDF. Ogni quesito è numerato partendo da uno. Ogni risposta è preceduta da una lettera maiuscola, partendo da A. Ogni pagina è numerata ed è anche indicato il numero totale di pagine.
+
+Per ottenere il questionario, bisogna fornire un file di testo in formato Comma Separated Value. Questo è un file di testo con dei campi separati, di solito, da una virgola. Il separatore è modificabile tra punto e virgola, tabulazione ecc. La prima riga di deve contenere le etichette dei campi che seguiranno nelle righe successive. I nomi, obbligatori, sono:
+subject (questo campo rappresenta l'argomento del quesito e compare prima di ogni domanda);
+question (la domanda);
+A (la risposta corretta);
+B (risposta errata);
+C (risposta errata);
+D (risposta errata);
+image (questa è il nome di un file immagine opzionale, se presente viene raffigurata fra la domanda e la prima risposta).
+
+L'eventuale file immagine deve stare nella stessa cartella del file delle domande. Se è in una cartella diversa deve essere indicato il percorso relativamente a questa cartella.
+
+Il file in formato CSV può essere creato con un editor di testo o con un foglio elettronico (LibreOffice Calc o Microsoft Excel). Il separatore predefinito è la virgola, il testo deve essere racchiuso tra doppi apici se contiene una virgola e la codifica predefinita è utf-8.
+
+Le risposte vengono automaticamente mischiate e, contestualmente alla generazione del questionario, viene generato un file correttore in PDF con il numero della domanda seguito dalla lettera  della scelta corretta.
