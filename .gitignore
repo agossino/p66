@@ -111,7 +111,7 @@ share/
 lib64
 
 # others files/dir
-Example_questfile/
+examples/
 
 # mypy
 .mypy_cache/

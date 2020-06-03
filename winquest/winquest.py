@@ -6,14 +6,14 @@ from datetime import datetime
 from typing import Mapping, Dict, Any, List, Union
 
 from parameter import param_parser
-from utility import CSVReader, exception_printer
+from utility import exception_printer
 from guimixin import MainWindow
 import quest2pdf
 
 from _version import __version__
 
 
-LOGNAME = "quest2pdf"
+LOGNAME = "winquest"
 LOGGER = logging.getLogger(LOGNAME)
 
 
@@ -64,48 +64,49 @@ class ContentMix(MainWindow):
             self.errorbox("Indicare sorgente e destinazione")
 
     def to_pdf(self, input_file: Path, output_folder: Path):
+        exam = quest2pdf.Exam()
+
+        if self.parameters["csv-heading-keys"] is not None:
+            exam.attribute_selector = self.parameters["csv-heading-keys"].split(",")
         try:
-            exam = quest2pdf.Exam()
-
-            if self.parameters["csv-heading-keys"] is not None:
-                exam.attribute_selector = self.parameters["csv-heading-keys"].split(",")
             exam.from_csv(input_file)
-            exam.add_path_parent(input_file)
-            logging.warning("Parameter: %s", self.parameters)
-
-            for number in range(self.parameters["number"]):
-                if self.parameters["not_shuffle"] is False:
-                    exam.shuffle()
-
-                output_file_name_exam = Path(f"{self.parameters['exam']}_{number}.pdf")
-                output_file_name_correction = Path(
-                    f"{self.parameters['correction']}_{number}.pdf"
-                )
-
-                if isinstance(self.parameters["page_heading"], str):
-                    exam_heading = self.parameters["page_heading"]
-                elif self.parameters["page_heading"]:
-                    exam_heading = output_file_name_exam
-                else:
-                    exam_heading = ""
-
-                if isinstance(self.parameters["page_footer"], str):
-                    exam_footer = self.parameters["page_footer"]
-                elif self.parameters["page_footer"]:
-                    exam_footer = datetime.now().isoformat()
-                else:
-                    exam_footer = ""
-
-                exam.print(
-                    output_folder / output_file_name_exam,
-                    correction_file_name=output_folder / output_file_name_correction,
-                    heading=exam_heading,
-                    footer=exam_footer
-                )
         except Exception as err:
             LOGGER.critical("CSVReader failed: %s %s", err.__class__, err)
             self.errorbox(exception_printer(err))
             raise
+        exam.add_path_parent(input_file)
+        logging.info("Parameter: %s", self.parameters)
+
+        for number in range(self.parameters["number"]):
+            if self.parameters["not_shuffle"] is False:
+                exam.shuffle()
+
+            output_file_name_exam = Path(f"{self.parameters['exam']}_{number}.pdf")
+            output_file_name_correction = Path(
+                f"{self.parameters['correction']}_{number}.pdf"
+            )
+
+            if isinstance(self.parameters["page_heading"], str):
+                exam_heading = self.parameters["page_heading"]
+            elif self.parameters["page_heading"]:
+                exam_heading = output_file_name_exam
+            else:
+                exam_heading = ""
+
+            if isinstance(self.parameters["page_footer"], str):
+                exam_footer = self.parameters["page_footer"]
+            elif self.parameters["page_footer"]:
+                exam_footer = datetime.now().isoformat()
+            else:
+                exam_footer = ""
+
+            exam.print(
+                output_folder / output_file_name_exam,
+                correction_file_name=output_folder / output_file_name_correction,
+                heading=exam_heading,
+                footer=exam_footer
+            )
+
         self.infobox("Avviso", "Conversione effettuata")
 
         self.data_queue.put("end")
