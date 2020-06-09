@@ -10,7 +10,7 @@ from utility import exception_printer
 from guimixin import MainWindow
 import quest2pdf
 
-from _version import __version__
+from version import __version__
 
 
 LOGNAME = "winquest"
@@ -66,8 +66,8 @@ class ContentMix(MainWindow):
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = quest2pdf.Exam()
 
-        if self.parameters["csv-heading-keys"] is not None:
-            exam.attribute_selector = self.parameters["csv-heading-keys"].split(",")
+        if self.parameters["csv_heading_keys"] is not None:
+            exam.attribute_selector = self.parameters["csv_heading_keys"].split(",")
         try:
             exam.from_csv(input_file)
         except Exception as err:
