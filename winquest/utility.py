@@ -16,4 +16,3 @@ def exception_printer(exception_instance: Exception) -> str:
         return exc_list[2] + ": " + str(exception_instance)
     except IndexError:
         return str(exception_instance)
-

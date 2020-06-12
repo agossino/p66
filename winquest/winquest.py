@@ -104,7 +104,7 @@ class ContentMix(MainWindow):
                 output_folder / output_file_name_exam,
                 correction_file_name=output_folder / output_file_name_correction,
                 heading=exam_heading,
-                footer=exam_footer
+                footer=exam_footer,
             )
 
         self.infobox("Avviso", "Conversione effettuata")
