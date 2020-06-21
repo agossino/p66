@@ -5,25 +5,22 @@ from pathlib import Path
 from datetime import datetime
 from typing import Mapping, Dict, Any, List, Union
 
-from parameter import param_parser
+from parameter import Parameter
 from utility import exception_printer
 from guimixin import MainWindow
 import quest2pdf
 
 from version import __version__
 
-
-LOGNAME = "winquest"
-LOGGER = logging.getLogger(LOGNAME)
-
-
 def main():
     """Reads parameter and start loop.
     """
-    param: Dict[str, Any] = param_parser()
-    LOGGER.debug(str(param))
+    app_conf_file = Path("conf.ini")
+    param: Parameter = Parameter()
+    param.load_from_ini(app_conf_file)
+    logging.warning(str(param.dictionary))
 
-    c = ContentMix(param)
+    c = ContentMix(param.dictionary["Default"])
     c.mainloop()
 
 
@@ -66,8 +63,8 @@ class ContentMix(MainWindow):
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = quest2pdf.Exam()
 
-        if self.parameters["csv_heading_keys"] is not None:
-            exam.attribute_selector = self.parameters["csv_heading_keys"].split(",")
+        if self.parameters["csv-heading-keys"] is not None:
+            exam.attribute_selector = self.parameters["csv-heading-keys"].split(",")
         try:
             exam.from_csv(input_file)
         except Exception as err:
