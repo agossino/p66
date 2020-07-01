@@ -41,4 +41,3 @@ def test_load_from_json(conf_contents, setup_in_current):
     param.load_from_json(file_path)
 
     assert param.dictionary == conf_contents
-
