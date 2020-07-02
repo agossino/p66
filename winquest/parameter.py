@@ -1,20 +1,17 @@
 import configparser
-import logging
-import logging.config
 import json
 import pathlib
 from typing import Dict, Any, Tuple, Callable
 
-logName = "quest2pdf." + __name__
-logger = logging.getLogger(logName)
-
 
 class Parameter:
-    def __init__(self, integers: Tuple[str] = (), booleans: Tuple[str] = ()):
+    def __init__(self, integers: Tuple[str, ...] = (), booleans: Tuple[str, ...] = ()):
         self._para = {}
         self._conf_ini = configparser.ConfigParser()
-        self._get_data_type: Dict[Tuple[str], Callable] = {integers: self._conf_ini.getint,
-                                                           booleans: self._conf_ini.getboolean}
+        self._get_data_type: Dict[Tuple[str], Callable] = {
+            integers: self._conf_ini.getint,
+            booleans: self._conf_ini.getboolean,
+        }
 
     @property
     def dictionary(self) -> Dict[str, Any]:
@@ -25,17 +22,16 @@ class Parameter:
         home_path = pathlib.Path.home()
 
         files = (
-                str(file_path),
-                str(script_path.joinpath(file_path.name)),
-                str(home_path.joinpath(file_path.name)),
-            )
+            str(file_path),
+            str(script_path.joinpath(file_path.name)),
+            str(home_path.joinpath(file_path.name)),
+        )
 
         self._conf_ini.read(files)
 
         for section in self._conf_ini.sections():
             self._para.update({section: {}})
             for option in self._conf_ini[section]:
-                logging.warning("key %s", option)
                 self._para[section][option] = self._get_value(section, option)
 
     def load_from_json(self, file_path: pathlib.Path):
