@@ -1,5 +1,5 @@
 test:
-	PYTHONPATH=winquest pytest tests/
+	pytest tests/
 
 clean:
 	find . -name '*.pyc' -execdir rm -f {} +
@@ -8,7 +8,7 @@ clean:
 	python setup clean --all
 
 black:
-	black winquest/
+	black p66/
 	black tests/unit/
 
 build:

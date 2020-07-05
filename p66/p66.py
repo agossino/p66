@@ -4,12 +4,12 @@ import _thread, queue
 from pathlib import Path
 from typing import Mapping, Union
 
+import exam2pdf
+
 from parameter import Parameter
 from utility import exception_printer
 from guimixin import MainWindow
-import exam2pdf
-
-from winquest import __version__
+from _version import __version__
 
 Parameters = Mapping[str, Union[str, int, bool]]
 
