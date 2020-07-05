@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 
-LOGNAME = "winquest"
+LOGNAME = "p66"
 LOGGER = logging.getLogger(LOGNAME)
 
 

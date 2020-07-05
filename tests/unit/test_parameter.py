@@ -1,6 +1,6 @@
 import pathlib
 
-from winquest import parameter
+from p66 import parameter
 
 
 def test_no_values():
