@@ -1,10 +1,10 @@
 import pathlib
 
-from parameter import Parameter
+from winquest import parameter
 
 
 def test_no_values():
-    param = Parameter()
+    param = parameter.Parameter()
 
     values = param.dictionary
 
@@ -14,7 +14,7 @@ def test_no_values():
 def test_load_from_ini_failed(setup_dirs):
     file_path = pathlib.Path("conf.ini")
 
-    param = Parameter()
+    param = parameter.Parameter()
 
     param.load_from_ini(file_path)
 
@@ -26,7 +26,7 @@ def test_load_from_ini_failed(setup_dirs):
 def test_load_from_ini(conf_contents, setup_in_current):
     file_path = pathlib.Path("conf.ini")
 
-    param = Parameter(integers=("integer",), booleans=("boolean",))
+    param = parameter.Parameter(integers=("integer",), booleans=("boolean",))
 
     param.load_from_ini(file_path)
 
@@ -36,7 +36,7 @@ def test_load_from_ini(conf_contents, setup_in_current):
 def test_load_from_json(conf_contents, setup_in_current):
     file_path = pathlib.Path("conf.json")
 
-    param = Parameter()
+    param = parameter.Parameter()
 
     param.load_from_json(file_path)
 

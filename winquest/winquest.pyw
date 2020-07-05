@@ -7,11 +7,13 @@ from typing import Mapping, Union
 from parameter import Parameter
 from utility import exception_printer
 from guimixin import MainWindow
-import quest2pdf
+import exam2pdf
 
-from version import __version__
+from winquest import __version__
 
 Parameters = Mapping[str, Union[str, int, bool]]
+
+
 def main():
     """Reads parameter and start loop.
     """
@@ -19,6 +21,7 @@ def main():
 
     c = ContentMix(app_conf_file)
     c.mainloop()
+
 
 def load_parameters(app_conf_file: Path) -> Parameters:
     integer_options = ("n copies",)
@@ -68,7 +71,7 @@ class ContentMix(MainWindow):
             self.errorbox("Indicare sorgente e destinazione")
 
     def to_pdf(self, input_file: Path, output_folder: Path):
-        exam = quest2pdf.Exam()
+        exam = exam2pdf.Exam()
 
         if self.parameters["csv heading keys"] is not None:
             exam.attribute_selector = self.parameters["csv heading keys"].split(",")
