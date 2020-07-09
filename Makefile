@@ -1,6 +1,9 @@
 test:
 	pytest tests/
 
+changelog:
+	git log --oneline --decorate --color
+
 clean:
 	find . -name '*.pyc' -execdir rm -f {} +
 	find . -type d -name '__pycache__' -execdir rm -rf {} +

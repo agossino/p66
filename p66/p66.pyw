@@ -2,7 +2,7 @@ import logging
 from tkinter import Menu, Label, YES, BOTH
 import _thread, queue
 from pathlib import Path
-from typing import Mapping, Union
+from typing import Dict, Any
 
 import exam2pdf
 
@@ -11,7 +11,7 @@ from utility import exception_printer
 from guimixin import MainWindow
 from _version import __version__
 
-Parameters = Mapping[str, Union[str, int, bool]]
+Parameters = Dict[str, Any]
 
 
 def main():
@@ -30,7 +30,7 @@ def load_parameters(app_conf_file: Path) -> Parameters:
     param: Parameter = Parameter(integers=integer_options, booleans=boolean_options)
     param.load_from_ini(app_conf_file)
 
-    return param.dictionary["exam"]
+    return param.dictionary
 
 
 class ContentMix(MainWindow):
@@ -73,10 +73,10 @@ class ContentMix(MainWindow):
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = exam2pdf.Exam()
 
-        if self.parameters["csv heading keys"] is not None:
-            exam.attribute_selector = self.parameters["csv heading keys"].split(",")
+        if self.parameters["exam"]["csv heading keys"] is not None:
+            exam.attribute_selector = self.parameters["exam"]["csv heading keys"].split(",")
         try:
-            exam.from_csv(input_file)
+            exam.from_csv(input_file, **self.parameters["DictReader"])
         except Exception as err:
             logging.critical("CSVReader failed: %s %s", err.__class__, err)
             self.errorbox(exception_printer(err))
@@ -84,14 +84,14 @@ class ContentMix(MainWindow):
         exam.add_path_parent(input_file)
         logging.info("Parameter: %s", self.parameters)
 
-        exam.print(Path(self.parameters["exam file name"]),
-                   Path(self.parameters["correction file name"]),
-                   self.parameters["answers shuffle"],
-                   self.parameters["questions shuffle"],
+        exam.print(Path(self.parameters["exam"]["exam file name"]),
+                   Path(self.parameters["exam"]["correction file name"]),
+                   self.parameters["exam"]["answers shuffle"],
+                   self.parameters["exam"]["questions shuffle"],
                    output_folder,
-                   self.parameters["n copies"],
-                   self.parameters["heading"],
-                   self.parameters["footer"])
+                   self.parameters["exam"]["n copies"],
+                   self.parameters["exam"]["heading"],
+                   self.parameters["exam"]["footer"])
 
         self.infobox("Avviso", "Conversione effettuata")
 
