@@ -1,1 +1,2 @@
-include README.md p66/conf.ini
+include README.md p66/conf.ini p66/help.txt
+
