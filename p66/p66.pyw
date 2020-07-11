@@ -73,11 +73,11 @@ class ContentMix(MainWindow):
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = exam2pdf.Exam()
 
-        if self.parameters["exam"]["csv heading keys"] is not None:
+        if self.parameters["exam"].get("csv heading keys", None) is not None:
             exam.attribute_selector = self.parameters["exam"]["csv heading keys"].split(",")
         try:
             exam.from_csv(input_file, **self.parameters["DictReader"])
-        except Exception as err:
+        except exam2pdf.Exam2pdfException as err:
             logging.critical("CSVReader failed: %s %s", err.__class__, err)
             self.errorbox(exception_printer(err))
             raise
