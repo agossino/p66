@@ -6,10 +6,10 @@ from typing import Dict, Any
 
 import exam2pdf
 
-from parameter import Parameter
-from utility import exception_printer
-from guimixin import MainWindow
-from _version import __version__
+from .parameter import Parameter
+from .utility import exception_printer
+from .guimixin import MainWindow
+from ._version import __version__
 
 Parameters = Dict[str, Any]
 
@@ -34,10 +34,21 @@ def load_parameters(app_conf_file: Path) -> Parameters:
 
 
 class ContentMix(MainWindow):
-    def __init__(self, app_conf_file: Path = "conf.ini"):
+    def __init__(self, app_conf_file: Path = Path("conf.ini")):
         """Get application parameters and show the main window.
         """
         self.app_conf_file: Path = app_conf_file
+        self._exam_default_param: Parameters = {
+            "csv heading keys": None,
+            "exam file name": "Exam.pdf",
+            "correction file name": "Checker.pdf",
+            "answers shuffle": True,
+            "questions shuffle": False,
+            "n copies": 1,
+            "heading": "",
+            "footer": "",
+        }
+        self._DictReader_defalut_param: Parameters = {}
         self.parameters: Parameters = load_parameters(app_conf_file)
         MainWindow.__init__(self, Path(__file__).stem)
         self.data_queue = queue.Queue()
@@ -73,10 +84,15 @@ class ContentMix(MainWindow):
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = exam2pdf.Exam()
 
-        if self.parameters["exam"].get("csv heading keys", None) is not None:
-            exam.attribute_selector = self.parameters["exam"]["csv heading keys"].split(",")
+        self._exam_default_param.update(self.parameters.get("exam", {}))
+        self._DictReader_defalut_param.update(self.parameters.get("DictReader", {}))
+
+        if self._exam_default_param.get("csv heading keys", None) is not None:
+            exam.attribute_selector = self._exam_default_param[
+                "csv heading keys"
+            ].split(",")
         try:
-            exam.from_csv(input_file, **self.parameters["DictReader"])
+            exam.from_csv(input_file, **self._DictReader_defalut_param)
         except exam2pdf.Exam2pdfException as err:
             logging.critical("CSVReader failed: %s %s", err.__class__, err)
             self.errorbox(exception_printer(err))
@@ -84,14 +100,21 @@ class ContentMix(MainWindow):
         exam.add_path_parent(input_file)
         logging.info("Parameter: %s", self.parameters)
 
-        exam.print(Path(self.parameters["exam"]["exam file name"]),
-                   Path(self.parameters["exam"]["correction file name"]),
-                   self.parameters["exam"]["answers shuffle"],
-                   self.parameters["exam"]["questions shuffle"],
-                   output_folder,
-                   self.parameters["exam"]["n copies"],
-                   self.parameters["exam"]["heading"],
-                   self.parameters["exam"]["footer"])
+        try:
+            exam.print(
+                Path(self._exam_default_param["exam file name"]),
+                Path(self._exam_default_param["correction file name"]),
+                self._exam_default_param["answers shuffle"],
+                self._exam_default_param["questions shuffle"],
+                output_folder,
+                self._exam_default_param["n copies"],
+                self._exam_default_param["heading"],
+                self._exam_default_param["footer"],
+            )
+        except exam2pdf.Exam2pdfException as err:
+            logging.critical("Exam.print failed: %s %s", err.__class__, err)
+            self.errorbox(exception_printer(err))
+            raise
 
         self.infobox("Avviso", "Conversione effettuata")
 

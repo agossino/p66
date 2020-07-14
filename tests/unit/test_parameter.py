@@ -26,7 +26,7 @@ def test_load_from_ini_failed(setup_dirs):
 def test_load_from_ini(conf_contents, setup_in_current):
     file_path = pathlib.Path("conf.ini")
 
-    param = parameter.Parameter(integers=("integer",), booleans=("boolean",))
+    param = parameter.Parameter(integers=("n copies",), booleans=("questions shuffle",))
 
     param.load_from_ini(file_path)
 
