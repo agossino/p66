@@ -6,10 +6,10 @@ from typing import Dict, Any
 
 import exam2pdf
 
-from .parameter import Parameter
-from .utility import exception_printer
-from .guimixin import MainWindow
-from ._version import __version__
+from p66.parameter import Parameter
+from p66.utility import exception_printer
+from p66.guimixin import MainWindow
+from p66 import __version__
 
 Parameters = Dict[str, Any]
 
