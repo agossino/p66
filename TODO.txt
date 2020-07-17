@@ -1,1 +1,1 @@
-
+closing source selection/destination folder window, yield Path() Path() (the first is not a valid file) and add abort button

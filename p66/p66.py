@@ -7,11 +7,13 @@ from typing import Dict, Any
 import exam2pdf
 
 from p66.parameter import Parameter
-from p66.utility import exception_printer
+from p66.utility import set_i18n
 from p66.guimixin import MainWindow
 from p66 import __version__
 
 Parameters = Dict[str, Any]
+
+_ = set_i18n().gettext
 
 
 def main():
@@ -48,7 +50,7 @@ class ContentMix(MainWindow):
             "heading": "",
             "footer": "",
         }
-        self._DictReader_defalut_param: Parameters = {}
+        self._DictReader_default_param: Parameters = {}
         self.parameters: Parameters = load_parameters(app_conf_file)
         MainWindow.__init__(self, Path(__file__).stem)
         self.data_queue = queue.Queue()
@@ -78,27 +80,25 @@ class ContentMix(MainWindow):
             if input_file and output_folder:
                 _thread.start_new_thread(self.to_pdf, (input_file, output_folder))
                 break
-            # TODO in case of abort, exit from this dialog
             self.errorbox("Indicare sorgente e destinazione")
 
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = exam2pdf.Exam()
 
         self._exam_default_param.update(self.parameters.get("exam", {}))
-        self._DictReader_defalut_param.update(self.parameters.get("DictReader", {}))
+        self._DictReader_default_param.update(self.parameters.get("DictReader", {}))
 
         if self._exam_default_param.get("csv heading keys", None) is not None:
             exam.attribute_selector = self._exam_default_param[
                 "csv heading keys"
             ].split(",")
         try:
-            exam.from_csv(input_file, **self._DictReader_defalut_param)
+            exam.from_csv(input_file, **self._DictReader_default_param)
         except exam2pdf.Exam2pdfException as err:
-            logging.critical("CSVReader failed: %s %s", err.__class__, err)
-            self.errorbox(exception_printer(err))
+            logging.critical(_("Exam reading from csv failed: ") + "%s", err)
+            self.errorbox(err)
             raise
         exam.add_path_parent(input_file)
-        logging.info("Parameter: %s", self.parameters)
 
         try:
             exam.print(
@@ -112,8 +112,8 @@ class ContentMix(MainWindow):
                 self._exam_default_param["footer"],
             )
         except exam2pdf.Exam2pdfException as err:
-            logging.critical("Exam.print failed: %s %s", err.__class__, err)
-            self.errorbox(exception_printer(err))
+            logging.critical(_("Exam printing failed: ") + "%s", err)
+            self.errorbox(err)
             raise
 
         self.infobox("Avviso", "Conversione effettuata")
@@ -142,8 +142,8 @@ class ContentMix(MainWindow):
         try:
             self.handbook(str(script_path.joinpath(help_file_name)))
         except Exception as err:
-            logging.critical("Handbook opening failed: %s %s", err.__class__, err)
-            self.errorbox(exception_printer(err))
+            logging.critical("Handbook opening failed: %s", err)
+            self.errorbox(err)
             raise
 
 
