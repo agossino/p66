@@ -1,0 +1,138 @@
+# part-66 Exam printe.
+# Copyright (C) 2020 Giancarlo Ossino
+# This file is distributed under the same license as the p66 package.
+# Giancarlo Ossino <gcossino at gmail.com>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: p66 0.2.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-21 22:19+0200\n"
+"PO-Revision-Date: 2020-07-21 23:11+0200\n"
+"Last-Translator: Giancarlo Ossino <gcossino at gmail.com>\n"
+"Language-Team: it <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: p66/guimixin.py:27
+msgid "Error!"
+msgstr "Errore!"
+
+#: p66/guimixin.py:33
+msgid "Not implemented"
+msgstr "Non implementato"
+
+#: p66/guimixin.py:33
+msgid "Option not avilable"
+msgstr "Opzione non disponibile"
+
+#: p66/guimixin.py:36
+msgid "Verify quit"
+msgstr "Verifica uscita"
+
+#: p66/guimixin.py:36
+msgid "Are you sure you want to quit?"
+msgstr "Sei sicura di voler uscire?"
+
+#: p66/guimixin.py:41
+msgid "RTFM"
+msgstr "Leggi quel grazioso manuale, per favore"
+
+#: p66/guimixin.py:41
+msgid "See figure 1..."
+msgstr "Vedi figura 1..."
+
+#: p66/guimixin.py:44 p66/p66.py:79
+msgid "Handbook"
+msgstr "Manuale"
+
+#: p66/guimixin.py:53
+#, fuzzy
+msgid "Select a folder"
+msgstr "Seleziona la cartella di destinazione"
+
+#: p66/guimixin.py:67
+msgid "browser"
+msgstr "visualizzatore"
+
+#: p66/guimixin.py:73 p66/p66.py:93
+msgid "Select source file and destination folder"
+msgstr "Seleziona file sorgente e cartella di destinazione"
+
+#: p66/guimixin.py:74
+msgid "text file in CVS format"
+msgstr "file di testo in formato CVS"
+
+#: p66/guimixin.py:75
+#, fuzzy
+msgid "destination folder"
+msgstr "Cartella di destinazione"
+
+#: p66/guimixin.py:101
+#, fuzzy
+msgid "browse ..."
+msgstr "visualizza ..."
+
+#: p66/guimixin.py:179 p66/p66.py:70
+msgid "Exit"
+msgstr "Uscita"
+
+#: p66/guimixin.py:179
+msgid "Are you sure you want to leave?"
+msgstr "Sei sicuro di voler uscire?"
+
+#: p66/guimixin.py:183
+msgid "Exit not possible"
+msgstr "Uscita non possibile"
+
+#: p66/p66.py:59
+msgid ""
+"From table to PDF: print into a PDF file, a set of\n"
+"multi choice questions, from a Comma Separated Value file."
+msgstr ""
+"Da tabella a PDF: converte in un file PDF una serie di domande a scelta "
+"multipla, da un in formato Comma Separated Value"
+
+#: p66/p66.py:68
+msgid "Convert"
+msgstr "Converti"
+
+#: p66/p66.py:69
+msgid "Configure"
+msgstr "Configura"
+
+#: p66/p66.py:71
+msgid "File"
+msgstr "Archivio"
+
+#: p66/p66.py:78
+msgid "Help"
+msgstr "Aiuto"
+
+#: p66/p66.py:80 p66/p66.py:143
+msgid "Version"
+msgstr "Versione"
+
+#: p66/p66.py:85
+msgid "Info"
+msgstr "Info"
+
+#: p66/p66.py:130
+msgid "Conversion done"
+msgstr "Conversione fatta"
+
+#: p66/p66.py:137
+msgid "Configuration file read"
+msgstr "Letto il file di configurazione"
+
+#~ msgid "Seleziona una cartella"
+#~ msgstr "Seleziona una cartella"
+
+#~ msgid "Exam reading from csv failed: "
+#~ msgstr "Lettura da file CSV fallita"
+
+#~ msgid "Exam printing failed: "
+#~ msgstr "Stampa dell'esame fallita"

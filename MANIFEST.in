@@ -1,2 +1,3 @@
 include README.md p66/conf.ini p66/help.txt
+recursive-include p66/locale *
 

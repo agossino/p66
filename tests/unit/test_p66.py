@@ -30,6 +30,7 @@ def test_contentmix_no_cvs_file(tmp_path, monkeypatch):
     WHEN an image path is not found
     THEN Exam2pdf exception is raised
     """
+
     class MonkeyWin(p66.ContentMix):
         def errorbox(self, _):
             pass
@@ -48,6 +49,7 @@ def test_contentmix_cvs_image_not_found(
     WHEN an image path is not found
     THEN Exam2pdf exception is raised
     """
+
     class MonkeyWin(p66.ContentMix):
         def errorbox(self, _):
             pass

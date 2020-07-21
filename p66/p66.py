@@ -1,4 +1,5 @@
 import logging
+import gettext
 from tkinter import Menu, Label, YES, BOTH
 import _thread, queue
 from pathlib import Path
@@ -19,6 +20,10 @@ _ = set_i18n().gettext
 def main():
     """Reads parameter and start loop.
     """
+    this_script_path = Path(__file__)
+    locale = this_script_path.parent / "locale"
+    gettext.bindtextdomain("exam2pdf", localedir=locale)
+
     app_conf_file = Path("conf.ini")
 
     c = ContentMix(app_conf_file)
@@ -55,24 +60,34 @@ class ContentMix(MainWindow):
         MainWindow.__init__(self, Path(__file__).stem)
         self.data_queue = queue.Queue()
         self.geometry("500x500")
-        welcome = "Da tabella a PDF: genera un file di domande "
-        welcome += "a scelta multipla in formato PDF, a partire "
-        welcome += "da un file in formato Comma Separated Value."
+        welcome = _(
+            """From table to PDF: print into a PDF file, a set of
+multi choice questions, from a Comma Separated Value file."""
+        )
         Label(self, text=welcome, wraplength=500).pack(expand=YES, fill=BOTH)
 
         menu = Menu(self)
         self.config(menu=menu)
         file = Menu(menu)
 
-        file.add_command(label="Converti", command=self.read_input_file)
-        file.add_command(label="Configura", command=self.reload_params)
-        file.add_command(label="Termina", command=self.quit)
-        menu.add_cascade(label="File", menu=file)
+        convert_label = _("Convert")
+        configure_lable = _("Configure")
+        exit_label = _("Exit")
+        file_label = _("File")
+        file.add_command(label=convert_label, command=self.read_input_file)
+        file.add_command(label=configure_lable, command=self.reload_params)
+        file.add_command(label=exit_label, command=self.quit)
+        menu.add_cascade(label=file_label, menu=file)
 
         info = Menu(menu)
-        info.add_command(label="Guida", command=self.show_handbook)
-        info.add_command(label="Versione", command=self.show_version)
-        menu.add_cascade(label="Info", menu=info)
+        help_label = _("Help")
+        handbook_label = _("Handbook")
+        version_label = _("Version")
+        info.add_command(label=handbook_label, command=self.show_handbook)
+        info.add_command(label=version_label, command=self.show_version)
+        menu.add_cascade(label=help_label, menu=info)
+
+        self._info_label = _("Info")
 
     def read_input_file(self):
         while True:
@@ -80,7 +95,8 @@ class ContentMix(MainWindow):
             if input_file and output_folder:
                 _thread.start_new_thread(self.to_pdf, (input_file, output_folder))
                 break
-            self.errorbox("Indicare sorgente e destinazione")
+            source_dest_label = _("Select source file and destination folder")
+            self.errorbox(source_dest_label)
 
     def to_pdf(self, input_file: Path, output_folder: Path):
         exam = exam2pdf.Exam()
@@ -95,7 +111,7 @@ class ContentMix(MainWindow):
         try:
             exam.from_csv(input_file, **self._DictReader_default_param)
         except exam2pdf.Exam2pdfException as err:
-            logging.critical(_("Exam reading from csv failed: ") + "%s", err)
+            logging.critical("Exam reading from csv failed: %s", err)
             self.errorbox(err)
             raise
         exam.add_path_parent(input_file)
@@ -112,23 +128,26 @@ class ContentMix(MainWindow):
                 self._exam_default_param["footer"],
             )
         except exam2pdf.Exam2pdfException as err:
-            logging.critical(_("Exam printing failed: ") + "%s", err)
+            logging.critical("Exam printing failed: %s", err)
             self.errorbox(err)
             raise
 
-        self.infobox("Avviso", "Conversione effettuata")
+        conv_done_label = _("Conversion done")
+        self.infobox(self._info_label, conv_done_label)
 
         self.data_queue.put("end")
 
     def reload_params(self) -> None:
         self.parameters = load_parameters(self.app_conf_file)
-        self.infobox("Avviso", "Riletto file di configurazione")
+        read_label = _("Configuration file read")
+        self.infobox(self._info_label, read_label)
 
     def show_version(self) -> None:
         """Show application version
         """
+        version_label = _("Version")
         self.infobox(
-            "Versione",
+            version_label,
             "{app_name}: {version}".format(
                 app_name=Path(__file__).stem, version=__version__
             ),
