@@ -9,9 +9,14 @@ with a Frame (or a subclass derived from Frame) for its quit method
 import glob
 from pathlib import Path
 from typing import Tuple
+
 import tkinter.scrolledtext as tk_st
 from tkinter.messagebox import *
 from tkinter.filedialog import *
+
+from p66.utility import set_i18n
+
+_ = set_i18n().gettext
 
 
 class GuiMixin:
@@ -19,24 +24,24 @@ class GuiMixin:
         return showinfo(title, text)
 
     def errorbox(self, text):
-        showerror("Errore!", text)
+        showerror(_("Error!"), text)
 
     def question(self, title, text, *args):
         return askyesno(title, text)  # return True or False
 
     def notdone(self):
-        showerror("Non implementato", "Opzione non disponibile")
+        showerror(_("Not implemented"), _("Option not avilable"))
 
     def quit(self):
-        ans = self.question("Verify quit", "Are you sure you want to quit?")
+        ans = self.question(_("Verify quit"), _("Are you sure you want to quit?"))
         if ans:
             Frame.quit(self)  # quit not recursive!
 
     def help(self):
-        self.infobox("RTFM", "See figure 1...")
+        self.infobox(_("RTFM"), _("See figure 1..."))
 
     def handbook(self, file_name: str) -> None:
-        title: str = "Guida"
+        title: str = _("Handbook")
         self.browser(file_name, title)
 
     def select_openfile(self, file="", dir=".") -> str:
@@ -45,7 +50,7 @@ class GuiMixin:
     def select_savefile(self, file="", dir="."):
         return asksaveasfilename(initialfile=file, initialdir=dir)
 
-    def select_folder(self, title="Seleziona una cartella", initialdir=os.getcwd()):
+    def select_folder(self, title=_("Select a folder"), initialdir=os.getcwd()):
         return askdirectory(title=title, initialdir=initialdir)
 
     def clone(self, args=()):  # optional constructor args
@@ -59,15 +64,15 @@ class GuiMixin:
         text = tk_st.ScrolledText(new, wrap=WORD, height=30, width=85)
         # text.config(font=14)
         text.pack(expand=YES, fill=BOTH)
-        new.iconname("browser")
+        new.iconname(_("browser"))
         text.insert("0.0", open(filename, "r", encoding="utf-8").read())
         text.config(state=DISABLED)
 
     def enter_openfile(self) -> Tuple[Path, Path]:
         win = Toplevel()
-        win.title("Seleziona sorgente e destinazione")
-        file_label = "file di testo (CVS)"
-        folder_label = "cartella di destinazione"
+        win.title(_("Select source file and destination folder"))
+        file_label = _("text file in CVS format")
+        folder_label = _("destination folder")
         label_width = max(len(file_label), len(folder_label))
         file_selection = self._form_row(
             win, label=file_label, open_function=self.select_openfile, width=label_width
@@ -93,7 +98,7 @@ class GuiMixin:
         lab.pack(side=LEFT)  # and fixed-width labels
         ent.pack(side=LEFT, expand=YES, fill=X)  # or use grid(row, col)
         if browse:
-            btn = Button(row, text="sfoglia ...")
+            btn = Button(row, text=_("browse ..."))
             btn.pack(side=RIGHT)
             if not extend:
                 btn.config(command=lambda: var.set(open_function() or var.get()))
@@ -171,11 +176,11 @@ class MainWindow(Tk, _window, GuiMixin):
 
     def quit(self):
         if self.okayToQuit():  # threads running?
-            ans = self.question("Verifica uscita", "Sei sicuro di voler terminare?")
+            ans = self.question(_("Exit"), _("Are you sure you want to leave?"))
             if ans:
                 self.destroy()  # quit whole app
         else:
-            self.showinfo(self.__app, "Terminazione non permessa")
+            self.showinfo(self.__app, _("Exit not possible"))
 
     def destroy(self):
         Tk.quit(self)  # redef if exit ops
